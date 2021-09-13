@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Browser</title>
+</head>
+<style>
+	*{
+		margin: 0;
+		outline: 0;
+		padding: 0;
+	}
+	html,
+	body{
+		width: 100%;
+		height: 100%;
+		background: #fff;
+	}
+	body{
+		padding: 0px 8px;
+		box-sizing: border-box;
+	}
+	div.search-container,
+	form.search-container{
+		width: 100%;
+		height: auto;
+		padding: 20px;
+		display: flex;
+		flex-direction: row;
+		box-sizing: border-box;
+		justify-content: center;
+		font-family: 'Fira Code', monospace, 'Montserrat', sans-serif;
+	}
+	div.search-container input,
+	form.search-container input{
+		width: 300px;
+		height: 35px;
+		font-size: 12pt;
+		margin: 0px 2px;
+		padding: 0px 8px;
+		border-radius: 3px;
+		border: 1px solid #ccc;
+		box-sizing: border-box;
+	}
+	div.search-container button,
+	form.search-container button{
+		color: #fff;
+		width: 65px;
+		height: 35px;
+		cursor: pointer;
+		margin: 0px 2px;
+		font-size: 11pt;
+		font-weight: 600;
+		border-radius: 3px;
+		background: royalblue;
+		box-sizing: border-box;
+		border: 1px solid royalblue;
+	}
+	p.error,
+	div.error{
+		color: #fff;
+		width: 369px;
+		margin: auto;
+		padding: 10px;
+		font-size: 12pt;
+		font-weight: 600;
+		border-radius: 3px;
+		text-align: center;
+		transition: all, .4s;
+		background: indianred;
+		font-family: sans-serif;
+	}
+</style>
+<body>
+	<form class="search-container">
+		<input type="" class="search-input" placeholder="Digite uma URL">
+		<button class="search-button">Buscar</button>
+	</form>
+	<div class="search-result"></div>
+	
+	<script>
+		let error404 = document.createElement('p');
+		let input = document.querySelector('.search-input');
+		let button = document.querySelector('.search-button');
+		let result = document.querySelector('.search-result');
+		let form = document.querySelector('.search-container');
+
+		error404.setAttribute('class', 'error');
+		error404.style.left = input.offsetLeft+'px';
+		error404.innerText = 'Não foi possivel pesquisar, verifique a sua conexão';
+
+		form.addEventListener('submit', (event)=>{
+			event.preventDefault();
+
+			if(input.value != ""){
+				var r = fetch(input.value).then(response => response.text()).then(data => {
+					var html = new DOMParser();
+					var page = html.parseFromString(data, "text/html")
+					result.innerHTML = page.querySelector('html').innerHTML;
+				}).catch(error => {
+					setTimeout(()=>{
+						document.body.appendChild(error404)
+					}, 1000)
+				})
+				if(r){
+					result.innerHTML = '';
+					error404.remove();
+				}
+			}else{
+				var r = fetch('https:google.com').then(response => response.text()).then(data => {
+					var html = new DOMParser();
+					var page = html.parseFromString(data, "text/html")
+					result.innerHTML = page.querySelector('html').innerHTML;
+				}).catch(error => {
+					setTimeout(()=>{
+						document.body.appendChild(error404)
+					}, 1000)
+				})
+				if(r){
+					result.innerHTML = '';
+					error404.remove();
+				}
+			}
+		})
+	</script>
+</body>
+</html>
